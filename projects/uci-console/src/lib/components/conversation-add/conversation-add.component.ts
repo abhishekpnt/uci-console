@@ -1,10 +1,11 @@
 import {ActivatedRoute, Router} from '@angular/router';
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 import {GlobalService} from '../../services/global.service';
 import {UciService} from '../../services/uci.service';
 import moment from 'moment/moment';
+import {debounceTime} from 'rxjs/operators';
 
 @Component({
     selector: 'lib-conversation-add',
@@ -12,6 +13,7 @@ import moment from 'moment/moment';
     styleUrls: ['./conversation-add.component.css']
 })
 export class ConversationAddComponent implements OnInit {
+    @ViewChild('verifyAllModal') verifyAllModal;
     currentViewState = 'ADD_CONVERSATION';
     stepIndex = 1;
     selectedLogic = [];
@@ -95,6 +97,7 @@ export class ConversationAddComponent implements OnInit {
     isStartingMessageExist = false;
     fileErrorStatus;
     user;
+
     constructor(
         private uciService: UciService,
         private router: Router,
@@ -141,6 +144,14 @@ export class ConversationAddComponent implements OnInit {
             const tempDate = moment(val).add(1, 'days').format('YYYY-MM-DD');
             this.endMinDate = new Date(tempDate);
         });
+
+        this.conversationForm.get('startingMessage').valueChanges
+            .pipe(debounceTime(1000))
+            .subscribe(
+                value => {
+                    this.onStarringMessageChange();
+                }
+            );
     }
 
     userSegment() {
@@ -203,7 +214,7 @@ export class ConversationAddComponent implements OnInit {
         if (this.conversationId) {
             this.uciService.botUpdate(this.conversationId, {data: reqObj}).subscribe(
                 data => {
-                    this.verifyAllItemsModal = false;
+                    this.closeVerifyModal();
                     this.isLoaderShow = false;
                     this.router.navigate(['uci-admin/success'], {queryParams: {text: reqObj.startingMessage, botId: this.conversationId}});
                 }, error => {
@@ -217,7 +228,7 @@ export class ConversationAddComponent implements OnInit {
                     if (isTriggerBot) {
                         this.startConversation(data.data);
                     } else {
-                        this.verifyAllItemsModal = false;
+                        this.closeVerifyModal();
                         this.isLoaderShow = false;
                         this.router.navigate(['uci-admin/success'], {queryParams: {text: reqObj.startingMessage, botId: data.data.id}});
                     }
@@ -234,7 +245,7 @@ export class ConversationAddComponent implements OnInit {
         this.uciService.startConversation(bot.id).subscribe(
             data => {
                 this.isLoaderShow = false;
-                this.verifyAllItemsModal = false;
+                this.closeVerifyModal();
                 this.router.navigate(['uci-admin/success'], {
                     queryParams: {
                         text: this.conversationForm.value.startingMessage,
@@ -246,6 +257,13 @@ export class ConversationAddComponent implements OnInit {
                 this.isLoaderShow = false;
             }
         );
+    }
+
+    closeVerifyModal() {
+        if (this.verifyAllModal) {
+            this.verifyAllModal.deny('denied');
+        }
+        this.verifyAllItemsModal = false;
     }
 
     openModel() {
@@ -325,7 +343,6 @@ export class ConversationAddComponent implements OnInit {
     }
 
     onFileUpload(event) {
-        console.error("[UCI Console] - On file upload", {event});
         if (!event.target.files.length) {
             return;
         }
@@ -336,7 +353,6 @@ export class ConversationAddComponent implements OnInit {
         this.logicForm.patchValue({formId: ''});
         this.isModalLoaderShow = true;
         this.uciService.uploadFile(obj).subscribe((fileInfo: any) => {
-                console.error("[UCI Console]", {fileInfo});
                 if (fileInfo.result?.data) {
                     this.logicForm.patchValue({formId: fileInfo.result?.data});
                 }
@@ -391,7 +407,7 @@ export class ConversationAddComponent implements OnInit {
         });
     }
 
-    onKeyStarringMessage(event) {
+    onStarringMessageChange() {
         this.uciService.getCheckStartingMessage({startingMessage: this.conversationForm.value.startingMessage}).subscribe(val => {
             this.isStartingMessageExist = true;
         }, error => {
