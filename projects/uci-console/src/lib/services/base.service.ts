@@ -60,7 +60,7 @@ export class BaseService {
 
     public handleError(error: HttpErrorResponse) {
         if (error instanceof ErrorEvent) {
-            return throwError(error.error.message);
+            return throwError(error['error']['message']);
         }
 
         return throwError(error.error);
