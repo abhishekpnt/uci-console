@@ -1,6 +1,6 @@
 import {ActivatedRoute, Router} from '@angular/router';
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 
 import {GlobalService} from '../../services/global.service';
 import {UciService} from '../../services/uci.service';
@@ -26,8 +26,8 @@ export class ConversationAddComponent implements OnInit {
     isModalLoaderShow = false;
     logicFormRequest = {};
     isCheckedTermCondition = false;
-    conversationForm: FormGroup;
-    logicForm: FormGroup;
+    conversationForm: UntypedFormGroup;
+    logicForm: UntypedFormGroup;
     termsAndConditionModal = false;
     verifyAllItemsModal = false;
     conversationId;
@@ -102,7 +102,7 @@ export class ConversationAddComponent implements OnInit {
         private uciService: UciService,
         private router: Router,
         private activatedRoute: ActivatedRoute,
-        private fb: FormBuilder,
+        private fb: UntypedFormBuilder,
         private globalService: GlobalService
     ) {
         const tempDate = moment().add(1, 'days').format('YYYY-MM-DD');
