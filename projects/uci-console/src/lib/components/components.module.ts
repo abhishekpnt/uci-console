@@ -7,7 +7,6 @@ import {CommonModule} from '@angular/common';
 import {SidePanelComponent} from './side-panel/side-panel.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {TagInputModule} from 'ngx-chips';
-import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 import {ConversationListComponent} from './conversation-list/conversation-list.component';
 import {ConversationAddComponent} from './conversation-add/conversation-add.component';
 import {UserSegmentListComponent} from './user-segment-list/user-segment-list.component';
@@ -35,7 +34,6 @@ import {TermsConditionsComponent} from './terms-conditions/terms-conditions.comp
         ReactiveFormsModule,
         TagInputModule,
         PipesModule,
-        InfiniteScrollModule,
         CommonFormElementsModule,
         SuiModule,
     ],
