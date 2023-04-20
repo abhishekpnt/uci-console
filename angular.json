@@ -37,18 +37,6 @@
             "tsConfig": "projects/uci-console/tsconfig.spec.json",
             "karmaConfig": "projects/uci-console/karma.conf.js"
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/uci-console/tsconfig.lib.json",
-              "projects/uci-console/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     }
