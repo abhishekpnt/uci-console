@@ -1,7 +1,5 @@
 # UCI-Console
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.2.0.
-
 ## Code scaffolding
 
 Run `ng generate component component-name --project uci-console` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project uci-console`.

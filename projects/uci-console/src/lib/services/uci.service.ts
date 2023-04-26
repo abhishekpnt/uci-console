@@ -1,102 +1,99 @@
-import { Inject, Injectable } from '@angular/core';
-import { of as observableOf, throwError as observableThrowError, Observable, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
-import { HttpClient, HttpResponse } from '@angular/common/http';
-import { urlConfig } from '../config/url.config';
-
-export const CONTEXT_PROPS = {
-  cid: 'cid',
-  tid: 'tid',
-  uid: 'uid'
-};
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {BaseService} from './base.service';
+import {Observable} from 'rxjs';
+import {GlobalService} from './global.service';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
-export class UciService {
+export class UciService extends BaseService {
+    BASE_URL;
+    FORM_BASE_URL = 'https://dev.sunbirded.org/';
 
-  // tslint:disable-next-line:variable-name
-  private _userDetails: any;
+    constructor(public http: HttpClient, public globalService: GlobalService) {
+        super(http, globalService);
+        this.globalService.baseUrl$.subscribe(value => {
+            if (value) {
+                this.BASE_URL = value + '/admin/v1/';
+            }
+        });
+    }
 
-  // tslint:disable-next-line:variable-name
-  private _userName: any;
+    fetchConversation(params): Observable<any> {
+        return this.getRequest(this.BASE_URL + 'bot/get', params, {asset: 'bot'});
+    }
 
-  // tslint:disable-next-line:variable-name
-  private _forumIds: any;
+    searchConversation(params): Observable<any> {
+        return this.getRequest(this.BASE_URL + 'bot/search', params, {asset: 'bot'});
+    }
 
-  // tslint:disable-next-line:variable-name
-  private _context: any = {};
+    pauseConversation(botId): Observable<any> {
+        return this.getRequest(this.BASE_URL + `bot/pause/${botId}`, {}, {asset: 'bot'});
+    }
 
-  usr: any;
+    startConversation(botId): Observable<any> {
+        return this.getRequest(this.BASE_URL + `bot/start/${botId}`, {}, {asset: 'bot'});
+    }
 
-  constructor(
-    private http: HttpClient
-  ) {
-    // TODO: Take from the logged in user data;
-    // this.usr = this.configSvc.userProfile
-    this.usr = { userId: '1234' };
+    deleteConversation(botId): Observable<any> {
+        return this.getRequest(this.BASE_URL + `bot/delete/${botId}`, {}, {asset: 'bot'});
+    }
 
-  }
+    getBotUserDetails(id) {
+        return this.getRequest(this.BASE_URL + `bot/get/${id}`, {}, {asset: 'bot'});
+    }
 
-  // createPost(data: any) {
-  //   // return this.http.post(urlConfig.createPost(), data);
-  //   return this.csDiscussionService.createPost(data);
-  // }
-  // /**
-  //  * @description To get all the categories
-  //  */
+    getCheckStartingMessage(param) {
+        return this.getRequest(this.BASE_URL + `bot/getByParam`, param, {asset: 'bot'});
+    }
 
-  // fetchAllCategories() {
-  //   // return this.http.get<NSDiscussData.ICategorie[]>(urlConfig.getAllCategories()).pipe(
-  //   //   map((data: any) => {
-  //   //       // Taking only "categories" from the response
-  //   //       const resp = (data as any).categories;
-  //   //       return resp;
-  //   //   }),
-  //   //   catchError( error => {
-  //   //     return throwError( 'Something went wrong!' );
-  //   //   })
-  //   // );
-  //   console.log('in fetchall categories');
-  //   return this.csDiscussionService.fetchAllCategories().pipe(
-  //     map((data: any) => data.categories)
-  //   );
-  // }
+    botCreate(data) {
+        return this.postRequest(this.BASE_URL + 'bot/create', data, {asset: 'bot'});
+    }
 
-  // fetchSingleCategoryDetails(cid: any) {
-  //   return this.csDiscussionService.fetchSingleCategoryDetails(cid);
-  //   // return this.http.get<NSDiscussData.ICategorie>(urlConfig.getSingleCategoryDetails(cid));
-  // }
-  // fetchSingleCategoryDetailsSort(cid: number, sort: any, page?: any) {
-  //   return this.csDiscussionService.fetchSingleCategoryDetails(cid);
-  // }
+    botUpdate(id, data) {
+        return this.postRequest(this.BASE_URL + `bot/update/${id}`, data, {asset: 'bot'});
+    }
 
-  // set userDetails(userDetails) {
-  //   this._userDetails = userDetails;
-  // }
+    // User Segment APIs
+    fetchUserSegment(params): Observable<any> {
+        return this.getRequest(this.BASE_URL + 'userSegment/get', params, {asset: 'userSegment'});
+    }
 
-  // get userDetails() {
-  //   return this._userDetails;
-  // }
+    searchUserSegment(params): Observable<any> {
+        return this.getRequest(this.BASE_URL + 'userSegment/search', params, {asset: 'userSegment'});
+    }
 
-  // set userName(userName) {
-  //   this._userName = userName;
-  // }
+    createUserSegment(data) {
+        return this.postRequest(this.BASE_URL + 'userSegment/create', data, {asset: 'userSegment'});
+    }
 
-  // get userName() {
-  //   return this._userName;
-  // }
+    userSegmentQueryBuilder(data) {
+        return this.postRequest(this.BASE_URL + 'userSegment/queryBuilder', data, {asset: 'userSegment'});
+    }
 
-  // setContext(key, value) {
-  //   if (CONTEXT_PROPS[key]) {
-  //     this._context[key] = value;
-  //   } else {
-  //     console.log('Context can not be set for this key: ', key);
-  //   }
-  // }
+    // Conversation APIs
+    createLogic(data) {
+        return this.postRequest(this.BASE_URL + 'conversationLogic/create', data, {asset: 'conversationLogic'});
+    }
 
-  // getContext(key?: string) {
-  //   return key ? this._context[key] : this._context;
-  // }
+    updateLogic(id, data) {
+        return this.postRequest(this.BASE_URL + `conversationLogic/update/${id}`, data, {asset: 'conversationLogic'});
+    }
 
+    deleteLogic(id) {
+        return this.getRequest(this.BASE_URL + `conversationLogic/delete/${id}`, {}, {asset: 'conversationLogic'});
+    }
+
+    // Mis APIs
+    uploadFile(obj): Observable<any> {
+        let headers = new HttpHeaders();
+        headers = headers.set('Content-Type', 'multipart/form-data');
+        return this.http.post(this.BASE_URL + 'forms/upload', this.toFormData(obj), {headers});
+    }
+
+    readForm(data) {
+        return this.postRequest(this.FORM_BASE_URL + 'api/data/v1/form/read', data);
+    }
 }
