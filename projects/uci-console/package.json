@@ -19,7 +19,7 @@
     "@angular/core": ">=13.4.0",
     "@project-sunbird/client-services": "^5.1.2",
     "lodash-es": "^4.17.20",
-    "ngx-chips": "^3.0.0"
+    "ngx-chips": ">=2.2.0"
   },
   "description": "This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.2.0.",
   "scripts": {
