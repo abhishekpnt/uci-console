@@ -12,7 +12,7 @@ import {ConversationAddComponent} from './conversation-add/conversation-add.comp
 import {UserSegmentListComponent} from './user-segment-list/user-segment-list.component';
 import {CommonFormElementsModule} from '@project-sunbird/common-form-elements-full';
 import {UserSegmentAddComponent} from './user-segment-add/user-segment-add.component';
-import {SuiModule} from 'ng2-semantic-ui-v9';
+import {SuiModule} from '@project-sunbird/ng2-semantic-ui';
 import {ConversationSuccessComponent} from './conversation-success/conversation-success.component';
 import {UciGraphQlService} from '../services/uci-graph-ql.service';
 import {TermsConditionsComponent} from './terms-conditions/terms-conditions.component';
